@@ -9,7 +9,11 @@ import java.util.List;
 
 public class TaskRepository {
 
-    private TaskDao mTask;
+    private TaskDao mTask; // Variable recupérant le Dao des tasks
+
+    //***************************
+    // Constructor
+    //***************************
 
     public TaskRepository(TaskDao taskDao) {
 

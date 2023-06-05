@@ -5,11 +5,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import java.util.Comparator;
 
-@Entity(foreignKeys = @ForeignKey(entity = Project.class, parentColumns = "id", childColumns = "projectId"))
+@Entity(foreignKeys = @ForeignKey(entity = Project.class, parentColumns = "id", childColumns = "projectId"), indices = {@Index("projectId")})
 /**
  * <p>Model for the tasks of the application.</p>
  *
@@ -158,5 +159,13 @@ public class Task {
         public int compare(Task left, Task right) {
             return (int) (left.creationTimestamp - right.creationTimestamp);
         }
+    }
+
+    public long getProjectId() {
+        return projectId;
+    }
+
+    public long getCreationTimestamp() {
+        return creationTimestamp;
     }
 }

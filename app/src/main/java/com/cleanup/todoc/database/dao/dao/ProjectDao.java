@@ -18,6 +18,6 @@ public interface ProjectDao {
 
     @Query("DELETE FROM Project WHERE id = :projectId")
 
-    int deleteTask(long projectId);
+    int deleteProject(long projectId);
 
 }
