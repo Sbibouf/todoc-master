@@ -16,13 +16,15 @@ import java.util.concurrent.Executors;
 
 public class ViewModelFactory implements ViewModelProvider.Factory {
 
-    //Repositories
+    /**
+     * Repositories
+     */
 
     private final TaskRepository mTaskRepository;
     private final ProjectRepository mProjectRepository;
     private final Executor mExecutor;
 
-    private static ViewModelFactory sFactory;
+    private static volatile ViewModelFactory sFactory;
 
     public static ViewModelFactory getInstance(Context context) {
         if(sFactory == null) {
@@ -35,9 +37,10 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         return sFactory;
     }
 
-    //********************
-    // Constructor
-    //********************
+    /**
+     * Constructor
+     * @param context
+     */
 
     private ViewModelFactory(Context context) {
         TodocDatabase todocDatabase = TodocDatabase.getInstance(context);
@@ -49,6 +52,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
 
 
 
+    @SuppressWarnings("unchecked")
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {

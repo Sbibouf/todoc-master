@@ -23,7 +23,7 @@ public interface TaskDao {
     void createTask(Task task);
 
     @Query("SELECT * FROM Task WHERE id = :taskId")
-    LiveData<List<Task>> getTasks(long taskId);
+    LiveData<Task> getTasks(long taskId);
 
     @Insert
 

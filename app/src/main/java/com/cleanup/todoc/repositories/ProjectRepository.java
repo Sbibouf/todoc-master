@@ -9,19 +9,39 @@ public class ProjectRepository {
 
     private ProjectDao mProjectDao; // Variable récupérant le Dao des Projects
 
-    //***************************
-    // Constructor
-    //***************************
+
+    private static ProjectRepository instance = null;
+
+    /**
+     * Constructor
+     * @param projectDao
+     */
 
     public ProjectRepository(ProjectDao projectDao){
 
         this.mProjectDao=projectDao;
     }
 
+    /**
+     * Singleton
+     */
 
-    //***************************
-    // Get Project
-    //***************************
+    public static ProjectRepository getInstance(){
+        if(instance==null){
+            synchronized (ProjectRepository.class){
+                if(instance==null){
+                    instance = new ProjectRepository(instance.mProjectDao);
+                }
+            }
+        }
+        return instance;
+    }
+
+    /**
+     * Return a LiveData with the project identified with the ID
+     * @param projectId
+     * @return
+     */
 
     public LiveData<Project> getProject (long projectId) {
         return this.mProjectDao.getProject(projectId);

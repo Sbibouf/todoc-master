@@ -14,9 +14,9 @@ import java.util.concurrent.Executor;
 
 public class MainViewModel extends ViewModel {
 
-    //*****************
-    // Reposiroties
-    //*****************
+    /**
+     * Repositories
+     */
 
     private TaskRepository mTaskRepository;
 
@@ -24,12 +24,12 @@ public class MainViewModel extends ViewModel {
 
     private final Executor mExecutor;
 
-    //*****************
-    // Data
-    //*****************
+    /**
+     * Data
+     */
 
     @Nullable
-    private LiveData<List <Task>> currentTasks;
+    private LiveData<Task> currentTasks;
 
     public MainViewModel(TaskRepository taskRepository, ProjectRepository projectRepository, Executor executor) {
         mTaskRepository = taskRepository;
@@ -46,11 +46,12 @@ public class MainViewModel extends ViewModel {
         currentTasks = mTaskRepository.getTask(taskId);
     }
 
-    //********************
-    // Tasks
-    //********************
+    /**
+     * Tasks
+     * @return
+     */
     @Nullable
-    public LiveData<List<Task>> getCurrentTasks() {return this.currentTasks;}
+    public LiveData<Task> getCurrentTasks() {return this.currentTasks;}
 
 
 
@@ -76,9 +77,11 @@ public class MainViewModel extends ViewModel {
         });
     }
 
-    //********************
-    // Projects
-    //********************
+    /**
+     * Project
+     * @param projectId
+     * @return
+     */
 
     public LiveData<Project> getProject(long projectId) {
         return mProjectRepository.getProject(projectId);
