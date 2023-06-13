@@ -15,12 +15,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cleanup.todoc.R;
+import com.cleanup.todoc.databinding.ActivityMainBinding;
+import com.cleanup.todoc.injection.ViewModelFactory;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
+import com.cleanup.todoc.viewModel.MainViewModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +37,15 @@ import java.util.Date;
  * @author Gaëtan HERFRAY
  */
 public class MainActivity extends AppCompatActivity implements TasksAdapter.DeleteTaskListener {
+
+    /**
+     * The binding of all the elements in the activity
+     */
+
+    private ActivityMainBinding binding;
+
+    private MainViewModel mMainViewModel;
+
     /**
      * List of all projects available in the application
      */
@@ -73,35 +86,20 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     @Nullable
     private Spinner dialogSpinner = null;
 
-    /**
-     * The RecyclerView which displays the list of tasks
-     */
-    // Suppress warning is safe because variable is initialized in onCreate
-    @SuppressWarnings("NullableProblems")
-    @NonNull
-    private RecyclerView listTasks;
-
-    /**
-     * The TextView displaying the empty state
-     */
-    // Suppress warning is safe because variable is initialized in onCreate
-    @SuppressWarnings("NullableProblems")
-    @NonNull
-    private TextView lblNoTasks;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
 
-        setContentView(R.layout.activity_main);
+        setContentView(binding.getRoot());
+        configureViewModel();
 
-        listTasks = findViewById(R.id.list_tasks);
-        lblNoTasks = findViewById(R.id.lbl_no_task);
 
-        listTasks.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        listTasks.setAdapter(adapter);
+        binding.listTasks.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        binding.listTasks.setAdapter(adapter);
 
-        findViewById(R.id.fab_add_task).setOnClickListener(new View.OnClickListener() {
+        binding.fabAddTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showAddTaskDialog();
@@ -218,11 +216,11 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      */
     private void updateTasks() {
         if (tasks.size() == 0) {
-            lblNoTasks.setVisibility(View.VISIBLE);
-            listTasks.setVisibility(View.GONE);
+            binding.lblNoTask.setVisibility(View.VISIBLE);
+            binding.listTasks.setVisibility(View.GONE);
         } else {
-            lblNoTasks.setVisibility(View.GONE);
-            listTasks.setVisibility(View.VISIBLE);
+            binding.lblNoTask.setVisibility(View.GONE);
+            binding.listTasks.setVisibility(View.VISIBLE);
             switch (sortMethod) {
                 case ALPHABETICAL:
                     Collections.sort(tasks, new Task.TaskAZComparator());
@@ -320,5 +318,11 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
          * No sort
          */
         NONE
+    }
+
+    public void configureViewModel(){
+
+        this.mMainViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance(this)).get(MainViewModel.class);
+
     }
 }
