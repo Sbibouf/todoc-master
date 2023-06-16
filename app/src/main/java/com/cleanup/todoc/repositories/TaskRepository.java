@@ -44,10 +44,11 @@ public class TaskRepository {
      * @return
      */
 
-    public LiveData<Task> getTask (long taskId) {
+    public LiveData<Task> getTask (Long taskId) {
         return this.mTask.getTasks(taskId);
     }
 
+    public LiveData<List<Task>> getAllTasks() {return this.mTask.getAllTasks();}
     /**
      * Create a Task and add it in the list via TaskDao
      * @param task
@@ -58,7 +59,7 @@ public class TaskRepository {
     }
 
     /**
-     * Remove a Task from the list via Dao
+     * Remove a Task from the list via TaskDao
      * @param task
      */
 

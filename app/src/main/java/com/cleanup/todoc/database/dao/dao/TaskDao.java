@@ -23,11 +23,11 @@ public interface TaskDao {
     void createTask(Task task);
 
     @Query("SELECT * FROM Task WHERE id = :taskId")
-    LiveData<Task> getTasks(long taskId);
+    LiveData<Task> getTasks(Long taskId);
 
-    @Insert
+    @Query("SELECT * FROM Task")
+    LiveData<List<Task>> getAllTasks();
 
-    long insertTask(Task task);
 
     @Update
 
@@ -35,5 +35,5 @@ public interface TaskDao {
 
     @Query("DELETE FROM Task WHERE id = :taskId")
 
-    int deleteTask(long taskId);
+    void deleteTask(Long taskId);
 }

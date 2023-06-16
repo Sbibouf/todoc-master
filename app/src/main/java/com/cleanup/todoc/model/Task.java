@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
@@ -21,12 +22,12 @@ public class Task {
      * The unique identifier of the task
      */
     @PrimaryKey(autoGenerate = true)
-    private long id;
+    private Long id;
 
     /**
      * The unique identifier of the project associated to the task
      */
-    private long projectId;
+    private Long projectId;
 
     /**
      * The name of the task
@@ -49,11 +50,18 @@ public class Task {
      * @param name              the name of the task to set
      * @param creationTimestamp the timestamp when the task has been created to set
      */
-    public Task(long id, long projectId, @NonNull String name, long creationTimestamp) {
+    public Task(Long id, Long projectId, @NonNull String name, long creationTimestamp) {
         this.setId(id);
         this.setProjectId(projectId);
         this.setName(name);
         this.setCreationTimestamp(creationTimestamp);
+    }
+
+    @Ignore
+    public Task (Long projectId, @NonNull String name, long creationTimestamp) {
+        this.projectId = projectId;
+        this.name = name;
+        this.creationTimestamp = creationTimestamp;
     }
 
     /**
@@ -61,16 +69,17 @@ public class Task {
      *
      * @return the unique identifier of the task
      */
-    public long getId() {
+    public Long getId() {
         return id;
     }
+
 
     /**
      * Sets the unique identifier of the task.
      *
      * @param id the unique idenifier of the task to set
      */
-    private void setId(long id) {
+    private void setId(Long id) {
         this.id = id;
     }
 
@@ -79,7 +88,7 @@ public class Task {
      *
      * @param projectId the unique identifier of the project associated to the task to set
      */
-    private void setProjectId(long projectId) {
+    private void setProjectId(Long projectId) {
         this.projectId = projectId;
     }
 
@@ -161,7 +170,7 @@ public class Task {
         }
     }
 
-    public long getProjectId() {
+    public Long getProjectId() {
         return projectId;
     }
 

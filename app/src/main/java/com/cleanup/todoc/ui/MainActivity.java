@@ -9,15 +9,15 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.cleanup.todoc.R;
 import com.cleanup.todoc.databinding.ActivityMainBinding;
@@ -29,6 +29,7 @@ import com.cleanup.todoc.viewModel.MainViewModel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>Home activity of the application which is displayed when the user opens the app.</p>
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     /**
      * The adapter which handles the list of tasks
      */
-    private final TasksAdapter adapter = new TasksAdapter(tasks, this);
+    private TasksAdapter adapter;
 
     /**
      * The sort method to be used to display tasks
@@ -94,15 +95,17 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
         setContentView(binding.getRoot());
         configureViewModel();
+        configureRecyclerView();
+        verifPresenceTache();
+        getTasks();
+        //sortTasks();
 
-
-        binding.listTasks.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        binding.listTasks.setAdapter(adapter);
 
         binding.fabAddTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showAddTaskDialog();
+
             }
         });
     }
@@ -127,15 +130,15 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
             sortMethod = SortMethod.RECENT_FIRST;
         }
 
-        updateTasks();
+        //sortTasks();
 
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onDeleteTask(Task task) {
-        tasks.remove(task);
-        updateTasks();
+        mMainViewModel.deleteTask(task);
+
     }
 
     /**
@@ -151,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
             // Get the selected project to be associated to the task
             Project taskProject = null;
+
             if (dialogSpinner.getSelectedItem() instanceof Project) {
                 taskProject = (Project) dialogSpinner.getSelectedItem();
             }
@@ -161,27 +165,17 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
             }
             // If both project and name of the task have been set
             else if (taskProject != null) {
-                // TODO: Replace this by id of persisted task
-                long id = (long) (Math.random() * 50000);
 
-
-                Task task = new Task(
-                        id,
-                        taskProject.getId(),
-                        taskName,
-                        new Date().getTime()
-                );
-
-                addTask(task);
+                mMainViewModel.createTask(taskProject.getId(), taskName, new Date().getTime());
 
                 dialogInterface.dismiss();
             }
             // If name has been set, but project has not been set (this should never occur)
-            else{
+            else {
                 dialogInterface.dismiss();
             }
         }
-        // If dialog is aloready closed
+        // If dialog is already closed
         else {
             dialogInterface.dismiss();
         }
@@ -201,21 +195,16 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         populateDialogSpinner();
     }
 
-    /**
-     * Adds the given task to the list of created tasks.
-     *
-     * @param task the task to be added to the list
-     */
-    private void addTask(@NonNull Task task) {
-        tasks.add(task);
-        updateTasks();
-    }
 
     /**
      * Updates the list of tasks in the UI
      */
-    private void updateTasks() {
-        if (tasks.size() == 0) {
+    private void sortTasks() {
+
+        LiveData<List<Task>> taskLiveData = mMainViewModel.getCurrentTasks();
+
+
+        if (taskLiveData == null) {
             binding.lblNoTask.setVisibility(View.VISIBLE);
             binding.listTasks.setVisibility(View.GONE);
         } else {
@@ -236,9 +225,11 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
                     break;
 
             }
-            adapter.updateTasks(tasks);
+            //adapter.updateTasks(tasks);
+            getTasks();
         }
     }
+
 
     /**
      * Returns the dialog allowing the user to create a new task.
@@ -320,9 +311,45 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         NONE
     }
 
-    public void configureViewModel(){
+    public void configureViewModel() {
 
         this.mMainViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance(this)).get(MainViewModel.class);
+        this.mMainViewModel.init();
+
+    }
+
+    public void configureRecyclerView() {
+
+        adapter = new TasksAdapter(tasks, this);
+        binding.listTasks.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        binding.listTasks.setAdapter(adapter);
+
+    }
+
+    private void getTasks() {
+        this.mMainViewModel.getCurrentTasks().observe(this, this::updateTasks);
+    }
+
+    private void updateTasks(List<Task> tasks) {
+        this.adapter.updateTasks(tasks);
+    }
+
+    private void verifPresenceTache(){
+        LiveData<List<Task>> taskLiveData = mMainViewModel.getCurrentTasks();
+
+        taskLiveData.observe(this, new Observer<List<Task>>() {
+            @Override
+            public void onChanged(List<Task> tasks) {
+                if(tasks.size()==0) {
+                    binding.lblNoTask.setVisibility(View.VISIBLE);
+                    binding.listTasks.setVisibility(View.GONE);
+                }
+                else {
+                    binding.lblNoTask.setVisibility(View.GONE);
+                    binding.listTasks.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
     }
 }

@@ -29,7 +29,7 @@ public class TaskDaoTest {
 
     private TodocDatabase database;
 
-    private static long Task_Id= 1;
+    private static Long Task_Id= 1L;
     private static Task Task_Demo = new Task(Task_Id,2L,"Tache_test", new Date().getTime());
 
 

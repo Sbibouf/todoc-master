@@ -29,7 +29,7 @@ public class MainViewModel extends ViewModel {
      */
 
     @Nullable
-    private LiveData<Task> currentTasks;
+    private LiveData<List<Task>> currentTasks;
 
     public MainViewModel(TaskRepository taskRepository, ProjectRepository projectRepository, Executor executor) {
         mTaskRepository = taskRepository;
@@ -37,13 +37,13 @@ public class MainViewModel extends ViewModel {
         mExecutor = executor;
     }
 
-    public void init(long taskId){
+    public void init(){
 
         if(this.currentTasks != null){
 
             return;
         }
-        currentTasks = mTaskRepository.getTask(taskId);
+        currentTasks = mTaskRepository.getAllTasks();
     }
 
     /**
@@ -51,31 +51,26 @@ public class MainViewModel extends ViewModel {
      * @return
      */
     @Nullable
-    public LiveData<Task> getCurrentTasks() {return this.currentTasks;}
+    public LiveData<List<Task>> getCurrentTasks() {return this.currentTasks;}
+
+    @Nullable
+    public LiveData<List<Task>> getAllTasks() {return mTaskRepository.getAllTasks(); }
 
 
 
-    public void createTask(long id, long taskId, String name, long creationTimestamp ) {
 
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                mTaskRepository.createTask(new Task(id, taskId, name, creationTimestamp));
-            }
+
+    public void createTask (Long projectId, String name, long creationTimestamp){
+        mExecutor.execute(()->{
+            mTaskRepository.createTask(new Task(projectId,name,creationTimestamp));
         });
     }
 
 
-
-    public void deleteTask(Task task) {
-
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                mTaskRepository.deleteTask(task);
-            }
-        });
+    public void deleteTask (Task task) {
+        mExecutor.execute(()->mTaskRepository.deleteTask(task));
     }
+
 
     /**
      * Project
@@ -83,7 +78,7 @@ public class MainViewModel extends ViewModel {
      * @return
      */
 
-    public LiveData<Project> getProject(long projectId) {
+    public LiveData<Project> getProject(Long projectId) {
         return mProjectRepository.getProject(projectId);
     }
 }
