@@ -51,4 +51,6 @@ public class ProjectRepository {
     public LiveData<List<Project>> getAllProject () {
         return this.mProjectDao.getAllProject();
     }
+
+    public LiveData<Project[]> getAllProjects() {return this.mProjectDao.getAllProjects();}
 }

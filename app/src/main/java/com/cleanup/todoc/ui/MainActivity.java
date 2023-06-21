@@ -50,24 +50,13 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     /**
      * List of all projects available in the application
      */
-    private final Project[] allProjects = Project.getAllProjects();
-
-    /**
-     * List of all current tasks of the application
-     */
-    @NonNull
-    private final ArrayList<Task> tasks = new ArrayList<>();
+    private Project[] allProjects;
 
     /**
      * The adapter which handles the list of tasks
      */
     private TasksAdapter adapter;
 
-    /**
-     * The sort method to be used to display tasks
-     */
-    @NonNull
-    private SortMethod sortMethod = SortMethod.NONE;
 
     /**
      * Dialog to create a new task
@@ -96,9 +85,9 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         setContentView(binding.getRoot());
         configureViewModel();
         configureRecyclerView();
+        getProjectsInTab();
         verifPresenceTache();
         getTasks();
-        //sortTasks();
 
 
         binding.fabAddTask.setOnClickListener(new View.OnClickListener() {
@@ -121,16 +110,14 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         int id = item.getItemId();
 
         if (id == R.id.filter_alphabetical) {
-            sortMethod = SortMethod.ALPHABETICAL;
+            getTasksAToZ();
         } else if (id == R.id.filter_alphabetical_inverted) {
-            sortMethod = SortMethod.ALPHABETICAL_INVERTED;
+            getTasksZToA();
         } else if (id == R.id.filter_oldest_first) {
-            sortMethod = SortMethod.OLD_FIRST;
+            getTasksOldToRecent();
         } else if (id == R.id.filter_recent_first) {
-            sortMethod = SortMethod.RECENT_FIRST;
+            getTasksRecentToOld();
         }
-
-        //sortTasks();
 
         return super.onOptionsItemSelected(item);
     }
@@ -196,39 +183,6 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     }
 
 
-    /**
-     * Updates the list of tasks in the UI
-     */
-    private void sortTasks() {
-
-        LiveData<List<Task>> taskLiveData = mMainViewModel.getCurrentTasks();
-
-
-        if (taskLiveData == null) {
-            binding.lblNoTask.setVisibility(View.VISIBLE);
-            binding.listTasks.setVisibility(View.GONE);
-        } else {
-            binding.lblNoTask.setVisibility(View.GONE);
-            binding.listTasks.setVisibility(View.VISIBLE);
-            switch (sortMethod) {
-                case ALPHABETICAL:
-                    Collections.sort(tasks, new Task.TaskAZComparator());
-                    break;
-                case ALPHABETICAL_INVERTED:
-                    Collections.sort(tasks, new Task.TaskZAComparator());
-                    break;
-                case RECENT_FIRST:
-                    Collections.sort(tasks, new Task.TaskRecentComparator());
-                    break;
-                case OLD_FIRST:
-                    Collections.sort(tasks, new Task.TaskOldComparator());
-                    break;
-
-            }
-            //adapter.updateTasks(tasks);
-            getTasks();
-        }
-    }
 
 
     /**
@@ -274,42 +228,30 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         return dialog;
     }
 
+    private void getProjectsInTab() {
+
+        mMainViewModel.getAllProjects().observe(this, new Observer<Project[]>() {
+            @Override
+            public void onChanged(Project[] projects) {
+                allProjects = projects;
+            }
+        });
+    }
+
+
     /**
      * Sets the data of the Spinner with projects to associate to a new task
      */
     private void populateDialogSpinner() {
-        final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, allProjects);
+        Project[] allP = mMainViewModel.getallP();
+        final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,allProjects);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         if (dialogSpinner != null) {
             dialogSpinner.setAdapter(adapter);
         }
     }
 
-    /**
-     * List of all possible sort methods for task
-     */
-    private enum SortMethod {
-        /**
-         * Sort alphabetical by name
-         */
-        ALPHABETICAL,
-        /**
-         * Inverted sort alphabetical by name
-         */
-        ALPHABETICAL_INVERTED,
-        /**
-         * Lastly created first
-         */
-        RECENT_FIRST,
-        /**
-         * First created first
-         */
-        OLD_FIRST,
-        /**
-         * No sort
-         */
-        NONE
-    }
+
 
     public void configureViewModel() {
 
@@ -320,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
     public void configureRecyclerView() {
 
-        adapter = new TasksAdapter(tasks, this);
+        adapter = new TasksAdapter(this);
         binding.listTasks.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         binding.listTasks.setAdapter(adapter);
 
@@ -330,21 +272,37 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         this.mMainViewModel.getCurrentTasks().observe(this, this::updateTasks);
     }
 
+    private void getTasksAToZ(){
+        this.mMainViewModel.getTasksAToZ().observe(this, this::updateTasks);
+    }
+
+    private void getTasksZToA(){
+        this.mMainViewModel.getTasksZToA().observe(this, this::updateTasks);
+    }
+
+    private void getTasksRecentToOld(){
+        this.mMainViewModel.getTasksRecentToOld().observe(this, this::updateTasks);
+    }
+
+    private void getTasksOldToRecent(){
+        this.mMainViewModel.getTasksOldToRecent().observe(this, this::updateTasks);
+    }
+
     private void updateTasks(List<Task> tasks) {
         this.adapter.updateTasks(tasks);
     }
 
-    private void verifPresenceTache(){
+
+    private void verifPresenceTache() {
         LiveData<List<Task>> taskLiveData = mMainViewModel.getCurrentTasks();
 
         taskLiveData.observe(this, new Observer<List<Task>>() {
             @Override
             public void onChanged(List<Task> tasks) {
-                if(tasks.size()==0) {
+                if (tasks.size() == 0) {
                     binding.lblNoTask.setVisibility(View.VISIBLE);
                     binding.listTasks.setVisibility(View.GONE);
-                }
-                else {
+                } else {
                     binding.lblNoTask.setVisibility(View.GONE);
                     binding.listTasks.setVisibility(View.VISIBLE);
                 }

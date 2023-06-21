@@ -66,4 +66,21 @@ public class TaskRepository {
     public void deleteTask(Task task) {
         mTask.deleteTask(task.getId());
     }
+
+    public LiveData<List<Task>> getTasksAToZ(){
+        return mTask.orderTaskAToZ();
+    }
+
+    public LiveData<List<Task>> getTasksZToA(){
+        return mTask.orderTaskZToA();
+    }
+
+    public LiveData<List<Task>> getTasksRecentToOld(){
+        return mTask.orderTaskRecentToOld();
+    }
+
+    public LiveData<List<Task>> getTasksOldToRecent(){
+        return mTask.orderTaskOldToRecent();
+    }
+
 }

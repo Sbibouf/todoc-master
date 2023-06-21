@@ -29,4 +29,7 @@ public interface ProjectDao {
     @Insert
 
     void createProject(Project project);
+
+    @Query("SELECT * FROM PROJECT")
+    LiveData<Project[]> getAllProjects();
 }
