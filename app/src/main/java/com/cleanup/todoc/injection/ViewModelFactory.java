@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.cleanup.todoc.database.dao.TodocDatabase;
+import com.cleanup.todoc.database.TodocDatabase;
 import com.cleanup.todoc.repositories.ProjectRepository;
 import com.cleanup.todoc.repositories.TaskRepository;
 import com.cleanup.todoc.viewModel.MainViewModel;

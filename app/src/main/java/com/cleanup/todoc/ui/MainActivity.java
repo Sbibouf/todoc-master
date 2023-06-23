@@ -45,18 +45,16 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
     private ActivityMainBinding binding;
 
+    /**
+     * The ViewModel that deals with the data
+     */
+
     private MainViewModel mMainViewModel;
 
     /**
-     * List of all projects available in the application
-     */
-    private Project[] allProjects;
-
-    /**
-     * The adapter which handles the list of tasks
+     * The recyclerview adapter which handles the list of tasks
      */
     private TasksAdapter adapter;
-
 
     /**
      * Dialog to create a new task
@@ -69,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      */
     @Nullable
     private EditText dialogEditText = null;
+
 
     /**
      * Spinner that allows the user to associate a project to a task
@@ -85,9 +84,10 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         setContentView(binding.getRoot());
         configureViewModel();
         configureRecyclerView();
-        getProjectsInTab();
+
         verifPresenceTache();
         getTasks();
+
 
 
         binding.fabAddTask.setOnClickListener(new View.OnClickListener() {
@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         dialogEditText = dialog.findViewById(R.id.txt_task_name);
         dialogSpinner = dialog.findViewById(R.id.project_spinner);
 
-        populateDialogSpinner();
+        getProjectInSpinner();
     }
 
 
@@ -228,12 +228,12 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         return dialog;
     }
 
-    private void getProjectsInTab() {
-
+    private void getProjectInSpinner(){
         mMainViewModel.getAllProjects().observe(this, new Observer<Project[]>() {
             @Override
             public void onChanged(Project[] projects) {
-                allProjects = projects;
+               // allProjects = projects;
+               populateDialogSpinner(projects);
             }
         });
     }
@@ -242,9 +242,9 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     /**
      * Sets the data of the Spinner with projects to associate to a new task
      */
-    private void populateDialogSpinner() {
-        Project[] allP = mMainViewModel.getallP();
-        final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,allProjects);
+    private void populateDialogSpinner(Project[] projects) {
+
+        final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,projects);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         if (dialogSpinner != null) {
             dialogSpinner.setAdapter(adapter);
@@ -269,6 +269,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     }
 
     private void getTasks() {
+        assert this.mMainViewModel.getCurrentTasks() != null;
         this.mMainViewModel.getCurrentTasks().observe(this, this::updateTasks);
     }
 
@@ -296,6 +297,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     private void verifPresenceTache() {
         LiveData<List<Task>> taskLiveData = mMainViewModel.getCurrentTasks();
 
+        assert taskLiveData != null;
         taskLiveData.observe(this, new Observer<List<Task>>() {
             @Override
             public void onChanged(List<Task> tasks) {

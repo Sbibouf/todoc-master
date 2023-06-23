@@ -20,22 +20,22 @@ import static org.junit.Assert.assertSame;
 public class TaskUnitTest {
     @Test
     public void test_projects() {
-        final Task task1 = new Task(1, 1, "task 1", new Date().getTime());
-        final Task task2 = new Task(2, 2, "task 2", new Date().getTime());
-        final Task task3 = new Task(3, 3, "task 3", new Date().getTime());
-        final Task task4 = new Task(4, 4, "task 4", new Date().getTime());
+        final Task task1 = new Task(1L, 1L, "task 1", new Date().getTime());
+        final Task task2 = new Task(2L, 2L, "task 2", new Date().getTime());
+        final Task task3 = new Task(3L, 3L, "task 3", new Date().getTime());
+        final Task task4 = new Task(4L, 4L, "task 4", new Date().getTime());
 
-        assertEquals("Projet Tartampion", task1.getProject().getName());
-        assertEquals("Projet Lucidia", task2.getProject().getName());
-        assertEquals("Projet Circus", task3.getProject().getName());
-        assertNull(task4.getProject());
+        assertEquals("Projet Tartampion", task1.getTaskProject().getName());
+        assertEquals("Projet Lucidia", task2.getTaskProject().getName());
+        assertEquals("Projet Circus", task3.getTaskProject().getName());
+        assertNull(task4.getTaskProject());
     }
 
     @Test
     public void test_az_comparator() {
-        final Task task1 = new Task(1, 1, "aaa", 123);
-        final Task task2 = new Task(2, 2, "zzz", 124);
-        final Task task3 = new Task(3, 3, "hhh", 125);
+        final Task task1 = new Task(1L, 1L, "aaa", 123);
+        final Task task2 = new Task(2L, 2L, "zzz", 124);
+        final Task task3 = new Task(3L, 3L, "hhh", 125);
 
         final ArrayList<Task> tasks = new ArrayList<>();
         tasks.add(task1);

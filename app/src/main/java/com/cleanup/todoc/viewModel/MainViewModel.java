@@ -83,8 +83,8 @@ public class MainViewModel extends ViewModel {
      * @return
      */
 
-    public LiveData<Project> getProject(Long projectId) {
-        return mProjectRepository.getProject(projectId);
+    public LiveData<Project> getProjectById(Long projectId) {
+        return mProjectRepository.getProjectById(projectId);
     }
 
 
