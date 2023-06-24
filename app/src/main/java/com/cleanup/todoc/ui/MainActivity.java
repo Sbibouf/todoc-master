@@ -82,9 +82,9 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         binding = ActivityMainBinding.inflate(getLayoutInflater());
 
         setContentView(binding.getRoot());
+
         configureViewModel();
         configureRecyclerView();
-
         verifPresenceTache();
         getTasks();
 
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
             // If both project and name of the task have been set
             else if (taskProject != null) {
 
-                mMainViewModel.createTask(taskProject.getId(), taskName, new Date().getTime());
+                mMainViewModel.createTask(taskProject.getId(), taskName, new Date().getTime(), taskProject);
 
                 dialogInterface.dismiss();
             }
@@ -257,6 +257,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
         this.mMainViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance(this)).get(MainViewModel.class);
         this.mMainViewModel.init();
+
 
     }
 

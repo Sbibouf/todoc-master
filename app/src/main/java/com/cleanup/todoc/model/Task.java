@@ -3,6 +3,7 @@ package com.cleanup.todoc.model;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
@@ -23,6 +24,10 @@ public class Task {
      */
     @PrimaryKey(autoGenerate = true)
     private Long id;
+
+
+    @Embedded(prefix = "Project_")
+    private Project project;
 
     /**
      * The unique identifier of the project associated to the task
@@ -58,10 +63,11 @@ public class Task {
     }
 
     @Ignore
-    public Task (Long projectId, @NonNull String name, long creationTimestamp) {
+    public Task (Long projectId, @NonNull String nameP, long creationTimestamp, Project project) {
         this.projectId = projectId;
-        this.name = name;
+        this.name = nameP;
         this.creationTimestamp = creationTimestamp;
+        this.project = project;
     }
 
     /**
@@ -99,7 +105,15 @@ public class Task {
      */
     @Nullable
     public Project getTaskProject() {
-        return Project.getProjectById(projectId);
+        return project;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     /**

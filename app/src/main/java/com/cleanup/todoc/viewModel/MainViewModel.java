@@ -65,9 +65,9 @@ public class MainViewModel extends ViewModel {
 
 
 
-    public void createTask (Long projectId, String name, long creationTimestamp){
+    public void createTask (Long projectId, String nameP, long creationTimestamp, Project project){
         mExecutor.execute(()->{
-            mTaskRepository.createTask(new Task(projectId,name,creationTimestamp));
+            mTaskRepository.createTask(new Task(projectId,nameP,creationTimestamp, project));
         });
     }
 
