@@ -12,7 +12,8 @@ import androidx.room.PrimaryKey;
 
 import java.util.Comparator;
 
-@Entity(foreignKeys = @ForeignKey(entity = Project.class, parentColumns = "id", childColumns = "projectId"), indices = {@Index("projectId")})
+@Entity(tableName = "Task", foreignKeys = @ForeignKey(entity = Project.class, parentColumns = "id", childColumns = "projectId"), indices = {@Index("projectId")})
+/**
 /**
  * <p>Model for the tasks of the application.</p>
  *
@@ -26,12 +27,12 @@ public class Task {
     private Long id;
 
 
-    @Embedded(prefix = "Project_")
+    /**
+     * The project use for the adapter, not included in the database
+     */
+    @Ignore
     private Project project;
 
-    /**
-     * The unique identifier of the project associated to the task
-     */
     private Long projectId;
 
     /**
@@ -51,11 +52,10 @@ public class Task {
      * Instantiates a new Task.
      *
      * @param id                the unique identifier of the task to set
-     * @param projectId         the unique identifier of the project associated to the task to set
      * @param name              the name of the task to set
      * @param creationTimestamp the timestamp when the task has been created to set
      */
-    public Task(Long id, Long projectId, @NonNull String name, long creationTimestamp) {
+    public Task(Long id,Long projectId, @NonNull String name, long creationTimestamp) {
         this.setId(id);
         this.setProjectId(projectId);
         this.setName(name);
@@ -63,11 +63,12 @@ public class Task {
     }
 
     @Ignore
-    public Task (Long projectId, @NonNull String nameP, long creationTimestamp, Project project) {
+    public Task (Long projectId, @NonNull String nameP, long creationTimestamp, Project project ) {
         this.projectId = projectId;
         this.name = nameP;
         this.creationTimestamp = creationTimestamp;
         this.project = project;
+
     }
 
     /**
@@ -89,6 +90,21 @@ public class Task {
         this.id = id;
     }
 
+
+    /**
+     * Returns the project associated to the task.
+     *
+     * @return the project associated to the task
+     */
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
     /**
      * Sets the unique identifier of the project associated to the task.
      *
@@ -98,22 +114,8 @@ public class Task {
         this.projectId = projectId;
     }
 
-    /**
-     * Returns the project associated to the task.
-     *
-     * @return the project associated to the task
-     */
-    @Nullable
-    public Project getTaskProject() {
-        return project;
-    }
-
-    public Project getProject() {
-        return project;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
+    public Long getProjectId() {
+        return projectId;
     }
 
     /**
@@ -144,11 +146,55 @@ public class Task {
         this.creationTimestamp = creationTimestamp;
     }
 
-    public Long getProjectId() {
-        return projectId;
-    }
 
     public long getCreationTimestamp() {
         return creationTimestamp;
+    }
+
+
+
+
+
+
+
+    //**************************
+    // For Tests
+    //**************************
+
+    public static class TaskAZComparator implements Comparator<Task> {
+        @Override
+        public int compare(Task left, Task right) {
+            return left.name.compareTo(right.name);
+        }
+    }
+
+    /**
+     * Comparator to sort task from Z to A
+     */
+    public static class TaskZAComparator implements Comparator<Task> {
+        @Override
+        public int compare(Task left, Task right) {
+            return right.name.compareTo(left.name);
+        }
+    }
+
+    /**
+     * Comparator to sort task from last created to first created
+     */
+    public static class TaskRecentComparator implements Comparator<Task> {
+        @Override
+        public int compare(Task left, Task right) {
+            return (int) (right.creationTimestamp - left.creationTimestamp);
+        }
+    }
+
+    /**
+     * Comparator to sort task from first created to last created
+     */
+    public static class TaskOldComparator implements Comparator<Task> {
+        @Override
+        public int compare(Task left, Task right) {
+            return (int) (left.creationTimestamp - right.creationTimestamp);
+        }
     }
 }

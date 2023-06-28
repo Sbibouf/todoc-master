@@ -3,7 +3,6 @@ package com.cleanup.todoc.repositories;
 import androidx.lifecycle.LiveData;
 
 import com.cleanup.todoc.database.dao.TaskDao;
-import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 
 import java.util.List;
@@ -49,7 +48,7 @@ public class TaskRepository {
         return this.mTask.getTasks(taskId);
     }
 
-    public LiveData<List<Task>> getAllTasks() {return this.mTask.getAllTasks();}
+    public LiveData<List<Task>> getAllTasks() {return  this.mTask.getAllTasks();}
     /**
      * Create a Task and add it in the list via TaskDao
      * @param task

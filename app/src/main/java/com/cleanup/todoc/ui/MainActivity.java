@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         configureViewModel();
         configureRecyclerView();
         verifPresenceTache();
-        getTasks();
+        //getTasks();
 
 
 
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
             // If both project and name of the task have been set
             else if (taskProject != null) {
 
-                mMainViewModel.createTask(taskProject.getId(), taskName, new Date().getTime(), taskProject);
+                mMainViewModel.createTask(taskProject.getId(),taskName, new Date().getTime(), taskProject );
 
                 dialogInterface.dismiss();
             }
@@ -228,12 +228,16 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         return dialog;
     }
 
+    /**
+     * Get all Projects from database and use it with the populateDialogSpinner method
+     */
+
     private void getProjectInSpinner(){
         mMainViewModel.getAllProjects().observe(this, new Observer<Project[]>() {
             @Override
             public void onChanged(Project[] projects) {
-               // allProjects = projects;
-               populateDialogSpinner(projects);
+                populateDialogSpinner(projects);
+                updateProject(projects);
             }
         });
     }
@@ -270,12 +274,11 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     }
 
     private void getTasks() {
-        assert this.mMainViewModel.getCurrentTasks() != null;
         this.mMainViewModel.getCurrentTasks().observe(this, this::updateTasks);
     }
 
     private void getTasksAToZ(){
-        this.mMainViewModel.getTasksAToZ().observe(this, this::updateTasks);
+        this.mMainViewModel.getTasksAToZ().observe(this, this::updateCurrentTask);
     }
 
     private void getTasksZToA(){
@@ -290,16 +293,25 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         this.mMainViewModel.getTasksOldToRecent().observe(this, this::updateTasks);
     }
 
-    private void updateTasks(List<Task> tasks) {
-        this.adapter.updateTasks(tasks);
+
+    private void updateCurrentTask(List<Task> tasks){
+        updateTasks(tasks);
+        //mMainViewModel.updateCurrentTask2(tasks);
+
     }
 
+    private void updateTasks(List<Task> tasks) {
+        this.adapter.updateTasks(tasks);
+
+    }
+
+    private void updateProject(Project[] projects){
+        this.adapter.updateProjects(projects);
+    }
 
     private void verifPresenceTache() {
-        LiveData<List<Task>> taskLiveData = mMainViewModel.getCurrentTasks();
 
-        assert taskLiveData != null;
-        taskLiveData.observe(this, new Observer<List<Task>>() {
+        mMainViewModel.getCurrentTasks().observe(this, new Observer<List<Task>>() {
             @Override
             public void onChanged(List<Task> tasks) {
                 if (tasks.size() == 0) {
@@ -308,9 +320,11 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
                 } else {
                     binding.lblNoTask.setVisibility(View.GONE);
                     binding.listTasks.setVisibility(View.VISIBLE);
+                    updateTasks(tasks);
                 }
             }
         });
 
     }
+
 }

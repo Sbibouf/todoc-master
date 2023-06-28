@@ -7,9 +7,9 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.room.Room;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner;
-import androidx.test.runner.AndroidJUnit4;
 
-import com.cleanup.todoc.database.dao.TodocDatabase;
+import com.cleanup.todoc.database.TodocDatabase;
+import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 
 import org.junit.After;
@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Date;
-import java.util.List;
 
 @RunWith(AndroidJUnit4ClassRunner.class)
 public class TaskDaoTest {
@@ -30,7 +29,8 @@ public class TaskDaoTest {
     private TodocDatabase database;
 
     private static Long Task_Id= 1L;
-    private static Task Task_Demo = new Task(Task_Id,2L,"Tache_test", new Date().getTime());
+    private static Project Project_Demo = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
+    private static Task Task_Demo = new Task("Tache_test", new Date().getTime(), Project_Demo, 1L);
 
 
 
@@ -38,7 +38,7 @@ public class TaskDaoTest {
     public InstantTaskExecutorRule mInstantTaskExecutorRule = new InstantTaskExecutorRule();
 
     @Before
-    public void initDb() throws Exception {
+    public void initDb() {
 
     this.database = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getInstrumentation().getContext(),
             TodocDatabase.class)
