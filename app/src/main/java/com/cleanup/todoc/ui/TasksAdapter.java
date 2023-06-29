@@ -18,6 +18,7 @@ import com.cleanup.todoc.model.Task;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * <p>Adapter which handles the list of tasks to display in the dedicated RecyclerView.</p>
@@ -34,7 +35,8 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
     /**
      * The list of project to identify the project associate with the task with id
      */
-    List<Project> mProjects;
+    @NonNull
+    private List<Project> mProjects;
 
     /**
      * The listener for when a task needs to be deleted
@@ -48,6 +50,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
      */
     TasksAdapter(@NonNull final DeleteTaskListener deleteTaskListener) {
         this.tasks = new ArrayList<>();
+        this.mProjects = new ArrayList<>();
         this.deleteTaskListener = deleteTaskListener;
     }
 
@@ -63,9 +66,10 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
         notifyDataSetChanged();
     }
 
-    void updateProjects(final Project[] projects){
+    void updateProjects(@NonNull final List<Project> projects){
 
-        mProjects= Arrays.asList(projects);
+        this.mProjects.clear();
+        this.mProjects = projects;
     }
 
     @NonNull
@@ -77,7 +81,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder taskViewHolder, int position) {
-        taskViewHolder.bind(tasks.get(position));
+        taskViewHolder.bind(tasks.get(position), mProjects);
     }
 
     @Override
@@ -160,12 +164,20 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
          *
          * @param task the task to bind in the item view
          */
-        void bind(Task task) {
+        void bind(Task task, List<Project> project) {
             lblTaskName.setText(task.getName());
             imgDelete.setTag(task);
 
-            final Project taskProject = task.getProject();
+            Project taskProject = null;
 
+            for(Project projects : project) {
+
+                if(Objects.equals(task.getProjectId(), projects.getId())){
+                    taskProject = projects;
+                    break;
+
+                }
+            }
 
             if (taskProject != null) {
                 imgProject.setSupportImageTintList(ColorStateList.valueOf(taskProject.getColor()));

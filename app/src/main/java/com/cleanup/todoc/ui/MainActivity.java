@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
         configureViewModel();
         configureRecyclerView();
+        getProjectToAdapter();
         verifPresenceTache();
         //getTasks();
 
@@ -153,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
             // If both project and name of the task have been set
             else if (taskProject != null) {
 
-                mMainViewModel.createTask(taskProject.getId(),taskName, new Date().getTime(), taskProject );
+                mMainViewModel.createTask(taskProject.getId(),taskName, new Date().getTime());
 
                 dialogInterface.dismiss();
             }
@@ -229,19 +230,21 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     }
 
     /**
-     * Get all Projects from database and use it with the populateDialogSpinner method
+     * Get all Projects in array from database and use it with the populateDialogSpinner method
      */
 
     private void getProjectInSpinner(){
-        mMainViewModel.getAllProjects().observe(this, new Observer<Project[]>() {
-            @Override
-            public void onChanged(Project[] projects) {
-                populateDialogSpinner(projects);
-                updateProject(projects);
-            }
-        });
+        mMainViewModel.getAllProjects().observe(this, this::populateDialogSpinner);
     }
 
+    /**
+     * Get all Projects in a list from database and give it to the adapter
+     */
+
+    private void getProjectToAdapter(){
+
+        mMainViewModel.getAllProject().observe(this, this::updateProject);
+    }
 
     /**
      * Sets the data of the Spinner with projects to associate to a new task
@@ -260,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     public void configureViewModel() {
 
         this.mMainViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance(this)).get(MainViewModel.class);
-        this.mMainViewModel.init();
+        //this.mMainViewModel.init();
 
 
     }
@@ -305,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
     }
 
-    private void updateProject(Project[] projects){
+    private void updateProject(List<Project> projects){
         this.adapter.updateProjects(projects);
     }
 

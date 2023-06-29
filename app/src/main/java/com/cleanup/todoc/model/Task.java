@@ -26,13 +26,9 @@ public class Task {
     @PrimaryKey(autoGenerate = true)
     private Long id;
 
-
     /**
-     * The project use for the adapter, not included in the database
+     * The unique identifier of the project associated to the task
      */
-    @Ignore
-    private Project project;
-
     private Long projectId;
 
     /**
@@ -63,11 +59,10 @@ public class Task {
     }
 
     @Ignore
-    public Task (Long projectId, @NonNull String nameP, long creationTimestamp, Project project ) {
+    public Task (Long projectId, @NonNull String nameP, long creationTimestamp ) {
         this.projectId = projectId;
         this.name = nameP;
         this.creationTimestamp = creationTimestamp;
-        this.project = project;
 
     }
 
@@ -91,19 +86,6 @@ public class Task {
     }
 
 
-    /**
-     * Returns the project associated to the task.
-     *
-     * @return the project associated to the task
-     */
-
-    public Project getProject() {
-        return project;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
-    }
 
     /**
      * Sets the unique identifier of the project associated to the task.

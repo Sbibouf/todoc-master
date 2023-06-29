@@ -9,8 +9,10 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.cleanup.todoc.injection.SortMethod;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
+import com.cleanup.todoc.model.TaskWithProject;
 import com.cleanup.todoc.repositories.ProjectRepository;
 import com.cleanup.todoc.repositories.TaskRepository;
 
@@ -30,42 +32,24 @@ public class MainViewModel extends ViewModel {
 
     private final Executor mExecutor;
 
-    private Project[] allP;
+    private SortMethod tri;
+
+
 
     /**
      * Data
      */
 
-    @Nullable
-    private MutableLiveData<List<Task>> currentTasks = new MutableLiveData<>();
-    private LiveData<List<Task>> mLiveData;
-    private MediatorLiveData<List<Task>> mCurrentTask = new MediatorLiveData<>();
 
 
     public MainViewModel(TaskRepository taskRepository, ProjectRepository projectRepository, Executor executor) {
         mTaskRepository = taskRepository;
         mProjectRepository = projectRepository;
         mExecutor = executor;
+        tri = SortMethod.NONE;
     }
 
-    public void init() {
 
-        if(mLiveData != null){
-
-            return;
-        }
-
-        mLiveData = mTaskRepository.getAllTasks();
-
-        mCurrentTask.addSource(mLiveData, new Observer<List<Task>>() {
-            @Override
-            public void onChanged(List<Task> tasks) {
-                mCurrentTask.setValue(tasks);
-            }
-        });
-        currentTasks = mCurrentTask;
-
-    }
 
 
 
@@ -76,7 +60,25 @@ public class MainViewModel extends ViewModel {
      */
     @Nullable
     public LiveData<List<Task>> getCurrentTasks() {
-        return this.currentTasks;
+        if(tri == SortMethod.NONE){
+            return mTaskRepository.getAllTasks();
+        }
+        else if (tri == SortMethod.ALPHABETICAL){
+
+            return mTaskRepository.getTasksAToZ();
+        }
+        else if (tri == SortMethod.ALPHABETICAL_INVERTED){
+
+            return mTaskRepository.getTasksZToA();
+        }
+        else if (tri == SortMethod.RECENT_FIRST){
+
+            return mTaskRepository.getTasksRecentToOld();
+        }
+        else{
+
+            return mTaskRepository.getTasksOldToRecent();
+        }
     }
 
     @Nullable
@@ -85,9 +87,9 @@ public class MainViewModel extends ViewModel {
     }
 
 
-    public void createTask(Long projectId, String nameP, long creationTimestamp, Project project) {
+    public void createTask(Long projectId, String nameP, long creationTimestamp) {
         mExecutor.execute(() -> {
-            mTaskRepository.createTask(new Task(projectId, nameP, creationTimestamp, project));
+            mTaskRepository.createTask(new Task(projectId, nameP, creationTimestamp));
         });
     }
 
@@ -110,21 +112,24 @@ public class MainViewModel extends ViewModel {
 
 
     public LiveData<List<Task>> getTasksAToZ() {
-        //return currentTasks.postValue(mTaskRepository.getTasksAToZ());
+        tri = SortMethod.ALPHABETICAL;
         return mTaskRepository.getTasksAToZ();
 
     }
 
     public LiveData<List<Task>> getTasksZToA() {
+        tri = SortMethod.ALPHABETICAL_INVERTED;
         return mTaskRepository.getTasksZToA();
 
     }
 
     public LiveData<List<Task>> getTasksRecentToOld() {
+        tri = SortMethod.RECENT_FIRST;
         return mTaskRepository.getTasksRecentToOld();
     }
 
     public LiveData<List<Task>> getTasksOldToRecent() {
+        tri = SortMethod.OLD_FIRST;
         return mTaskRepository.getTasksOldToRecent();
     }
 
@@ -136,14 +141,6 @@ public class MainViewModel extends ViewModel {
         return mProjectRepository.getAllProjects();
     }
 
-    public void updateCurrentTask (List<Task> tasks){
-
-        mCurrentTask.setValue(tasks);
-    }
-    public void updateCurrentTask2 (List<Task> tasks){
-
-        currentTasks.setValue(tasks);
-    }
 
 
 }
