@@ -33,7 +33,7 @@ public interface TaskDao {
      * @return
      */
     @Query("SELECT * FROM Task WHERE id = :taskId")
-    LiveData<Task> getTasks(Long taskId);
+    LiveData<Task> getTask(Long taskId);
 
     /**
      * Select all Tasks

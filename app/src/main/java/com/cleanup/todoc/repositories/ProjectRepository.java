@@ -28,11 +28,11 @@ public class ProjectRepository {
      * Singleton
      */
 
-    public static ProjectRepository getInstance(){
+    public static ProjectRepository getInstance(ProjectDao projectDao){
         if(instance==null){
             synchronized (ProjectRepository.class){
                 if(instance==null){
-                    instance = new ProjectRepository(instance.mProjectDao);
+                    instance = new ProjectRepository(projectDao);
                 }
             }
         }

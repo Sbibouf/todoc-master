@@ -58,8 +58,10 @@ public class Task {
         this.setCreationTimestamp(creationTimestamp);
     }
 
-    @Ignore
+
+
     public Task (Long projectId, @NonNull String nameP, long creationTimestamp ) {
+
         this.projectId = projectId;
         this.name = nameP;
         this.creationTimestamp = creationTimestamp;

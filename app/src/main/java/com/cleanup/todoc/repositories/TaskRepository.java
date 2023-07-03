@@ -27,11 +27,11 @@ public class TaskRepository {
      * Singleton
      */
 
-    public static TaskRepository getInstance(){
+    public static TaskRepository getInstance(TaskDao taskDao){
         if(instance==null){
             synchronized (TaskRepository.class){
                 if(instance==null){
-                    instance = new TaskRepository(instance.mTask);
+                    instance = new TaskRepository(taskDao);
                 }
             }
         }
@@ -39,16 +39,12 @@ public class TaskRepository {
     }
 
     /**
-     * Return a liveData with the list of Task identified by the ID
-     * @param taskId
+     * Return a liveData with the list of Task
      * @return
      */
 
-    public LiveData<Task> getTask (Long taskId) {
-        return this.mTask.getTasks(taskId);
-    }
-
     public LiveData<List<Task>> getAllTasks() {return  this.mTask.getAllTasks();}
+
     /**
      * Create a Task and add it in the list via TaskDao
      * @param task
@@ -67,17 +63,40 @@ public class TaskRepository {
         mTask.deleteTask(task.getId());
     }
 
+    /**
+     * Return a liveData with a list of Task sort A to Z
+     * @return
+     */
+
     public LiveData<List<Task>> getTasksAToZ(){
         return mTask.orderTaskAToZ();
     }
+
+
+    /**
+     * Return a liveData with a list of Task sort Z to A
+     * @return
+     */
 
     public LiveData<List<Task>> getTasksZToA(){
         return mTask.orderTaskZToA();
     }
 
+
+    /**
+     * Return a liveData with a list of Task sort Recent to Old
+     * @return
+     */
+
     public LiveData<List<Task>> getTasksRecentToOld(){
         return mTask.orderTaskRecentToOld();
     }
+
+
+    /**
+     * Return a liveData with a list of Task sort Old to Recent
+     * @return
+     */
 
     public LiveData<List<Task>> getTasksOldToRecent(){
         return mTask.orderTaskOldToRecent();

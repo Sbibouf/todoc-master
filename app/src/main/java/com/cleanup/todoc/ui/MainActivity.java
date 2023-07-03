@@ -263,7 +263,6 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     public void configureViewModel() {
 
         this.mMainViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance(this)).get(MainViewModel.class);
-        //this.mMainViewModel.init();
 
 
     }
