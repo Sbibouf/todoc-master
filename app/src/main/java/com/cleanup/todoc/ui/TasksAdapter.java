@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cleanup.todoc.R;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
+import com.cleanup.todoc.model.TaskWithProject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +45,8 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
     @NonNull
     private final DeleteTaskListener deleteTaskListener;
 
+    private List<TaskWithProject> mTaskWithProjects;
+
     /**
      * Instantiates a new TasksAdapter.
      *
@@ -51,6 +54,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
     TasksAdapter(@NonNull final DeleteTaskListener deleteTaskListener) {
         this.tasks = new ArrayList<>();
         this.mProjects = new ArrayList<>();
+        this.mTaskWithProjects = new ArrayList<>();
         this.deleteTaskListener = deleteTaskListener;
     }
 
@@ -64,6 +68,12 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
         this.tasks.clear();
         this.tasks = tasks;
         notifyDataSetChanged();
+    }
+
+    void updateTaskWithProject(List<TaskWithProject> taskWithProjects){
+        this.mTaskWithProjects.clear();
+        this.mTaskWithProjects = taskWithProjects;
+
     }
 
     void updateProjects(@NonNull final List<Project> projects){

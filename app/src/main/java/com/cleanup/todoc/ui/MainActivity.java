@@ -24,6 +24,7 @@ import com.cleanup.todoc.databinding.ActivityMainBinding;
 import com.cleanup.todoc.injection.ViewModelFactory;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
+import com.cleanup.todoc.model.TaskWithProject;
 import com.cleanup.todoc.viewModel.MainViewModel;
 
 import java.util.ArrayList;
@@ -87,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         configureRecyclerView();
         getProjectToAdapter();
         verifPresenceTache();
+        getTaskWithProject();
         //getTasks();
 
 
@@ -275,12 +277,9 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
     }
 
-    private void getTasks() {
-        this.mMainViewModel.getCurrentTasks().observe(this, this::updateTasks);
-    }
 
     private void getTasksAToZ(){
-        this.mMainViewModel.getTasksAToZ().observe(this, this::updateCurrentTask);
+        this.mMainViewModel.getTasksAToZ().observe(this, this::updateTasks);
     }
 
     private void getTasksZToA(){
@@ -295,11 +294,14 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         this.mMainViewModel.getTasksOldToRecent().observe(this, this::updateTasks);
     }
 
+    private void getTaskWithProject(){
+        this.mMainViewModel.getTaskWithProject().observe(this, this::updateTaskWithProject);
+    }
 
-    private void updateCurrentTask(List<Task> tasks){
-        updateTasks(tasks);
-        //mMainViewModel.updateCurrentTask2(tasks);
 
+
+    private void updateTaskWithProject(List<TaskWithProject> taskWithProjects){
+        this.adapter.updateTaskWithProject(taskWithProjects);
     }
 
     private void updateTasks(List<Task> tasks) {

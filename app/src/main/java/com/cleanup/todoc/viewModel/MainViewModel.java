@@ -34,6 +34,14 @@ public class MainViewModel extends ViewModel {
 
     private SortMethod tri;
 
+    private final MediatorLiveData<List<TaskWithProject>> result = new MediatorLiveData<>();
+
+    private List<Task> mTasks = new ArrayList<>();
+
+    private List<Project> mProjects = new ArrayList<>();
+
+
+
 
 
     /**
@@ -47,6 +55,39 @@ public class MainViewModel extends ViewModel {
         mProjectRepository = projectRepository;
         mExecutor = executor;
         tri = SortMethod.NONE;
+
+        LiveData<List<Project>> mLiveDataProject = mProjectRepository.getAllProject();
+        LiveData<List<Task>> mLiveDataTask = mTaskRepository.getAllTasks();
+
+        result.addSource(mLiveDataProject, newProjects ->{
+            mProjects = newProjects;
+            merge();
+        });
+
+        result.addSource(mLiveDataTask, newTasks->{
+            mTasks = newTasks;
+            merge();
+        });
+    }
+
+    private void merge(){
+        List<TaskWithProject> taskWithProjects = new ArrayList<>();
+        for(Task task : mTasks){
+            for(Project project : mProjects){
+                if(project.getId()==task.getId()){
+                    taskWithProjects.add(new TaskWithProject(task, project));
+                    break;
+                }
+            }
+        }
+        result.setValue(taskWithProjects);
+
+
+    }
+
+    public LiveData<List<TaskWithProject>> getTaskWithProject(){
+
+        return result;
     }
 
 
