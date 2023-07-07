@@ -28,7 +28,7 @@ public interface TaskDao {
     void createTask(Task task);
 
     /**
-     * Select one task with its ID
+     * Get one task with its ID
      * @param taskId
      * @return
      */
@@ -36,7 +36,7 @@ public interface TaskDao {
     LiveData<Task> getTask(Long taskId);
 
     /**
-     * Select all Tasks
+     * Get all Tasks
      * @return
      */
     @Query("SELECT * FROM Task")
@@ -61,25 +61,25 @@ public interface TaskDao {
     void deleteTask(Long taskId);
 
     /**
-     * Select all tasks by alphabetical order
+     * Get all tasks by alphabetical order
      */
     @Query("SELECT * FROM Task ORDER BY name")
     LiveData<List<Task>> orderTaskAToZ();
 
     /**
-     * Select all tasks by inverted alphabetical order
+     * Get all tasks by inverted alphabetical order
      */
     @Query("SELECT * FROM Task ORDER BY name DESC")
     LiveData<List<Task>> orderTaskZToA();
 
     /**
-     * Select all tasks by date
+     * Get all tasks by date
      */
     @Query("SELECT * FROM Task ORDER BY creationTimestamp")
     LiveData<List<Task>> orderTaskOldToRecent();
 
     /**
-     * Select all tasks by date inverted
+     * Get all tasks by date inverted
      */
 
     @Query("SELECT * FROM Task ORDER BY creationTimestamp DESC")

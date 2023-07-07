@@ -9,8 +9,14 @@ import java.util.List;
 
 public class TaskRepository {
 
-    private TaskDao mTask; // Variable recupérant le Dao des tasks
+    /**
+     * Dao
+     */
+    private TaskDao mTask;
 
+    /**
+     * Instance variable for the singleton
+     */
     private static TaskRepository instance = null;
 
     /**
@@ -24,7 +30,7 @@ public class TaskRepository {
     }
 
     /**
-     * Singleton
+     * Get an instance of a new TaskRepository
      */
 
     public static TaskRepository getInstance(TaskDao taskDao){

@@ -9,9 +9,15 @@ import java.util.List;
 
 public class ProjectRepository {
 
-    private ProjectDao mProjectDao; // Variable récupérant le Dao des Projects
+    /**
+     * Dao
+     */
+    private ProjectDao mProjectDao;
 
 
+    /**
+     * Instance variable for the singleton
+     */
     private static ProjectRepository instance = null;
 
     /**
@@ -25,7 +31,7 @@ public class ProjectRepository {
     }
 
     /**
-     * Singleton
+     * Get an instance of a new ProjectRepository
      */
 
     public static ProjectRepository getInstance(ProjectDao projectDao){
@@ -40,17 +46,17 @@ public class ProjectRepository {
     }
 
     /**
-     * Return a LiveData with the project identified with the ID
-     * @param projectId
+     * Return a Livedata with a list of all project from Dao
      * @return
      */
-
-    public LiveData<Project> getProjectById (Long projectId) {
-        return this.mProjectDao.getProjectbyId(projectId);
-    }
     public LiveData<List<Project>> getAllProject () {
         return this.mProjectDao.getAllProject();
     }
+
+    /**
+     * Return a livedata with an Araay of all projects from Dao
+     * @return
+     */
 
     public LiveData<Project[]> getAllProjects() {return this.mProjectDao.getAllProjects();}
 }

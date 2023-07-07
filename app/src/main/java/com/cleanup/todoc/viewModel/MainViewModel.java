@@ -32,9 +32,21 @@ public class MainViewModel extends ViewModel {
 
     private final Executor mExecutor;
 
+    /**
+     * Sort method to help returning the proper livedata
+     */
+
     private SortMethod tri;
 
+    /**
+     * The mediatorlivedata that allow to associate a task with a project from livedata
+     */
+
     private final MediatorLiveData<List<TaskWithProject>> result = new MediatorLiveData<>();
+
+    /**
+     * A lists of task and project to use for merging livedata into mediatorlivedata
+     */
 
     private List<Task> mTasks = new ArrayList<>();
 
@@ -45,7 +57,7 @@ public class MainViewModel extends ViewModel {
 
 
     /**
-     * Data
+     * Instantiates a new MainViewModel
      */
 
 
@@ -56,25 +68,37 @@ public class MainViewModel extends ViewModel {
         mExecutor = executor;
         tri = SortMethod.NONE;
 
-        LiveData<List<Project>> mLiveDataProject = mProjectRepository.getAllProject();
-        LiveData<List<Task>> mLiveDataTask = mTaskRepository.getAllTasks();
+        LiveData<List<Project>> mLiveDataProject = projectRepository.getAllProject();
+        LiveData<List<Task>> mLiveDataTask = taskRepository.getAllTasks();
 
-        result.addSource(mLiveDataProject, newProjects ->{
-            mProjects = newProjects;
-            merge();
+
+        result.addSource(mLiveDataProject, new Observer<List<Project>>() {
+            @Override
+            public void onChanged(List<Project> projects) {
+                mProjects=projects;
+                merge();
+
+            }
         });
 
         result.addSource(mLiveDataTask, newTasks->{
             mTasks = newTasks;
             merge();
+
         });
+
+
     }
+
+    /**
+     * Method that merge task and project together
+     */
 
     private void merge(){
         List<TaskWithProject> taskWithProjects = new ArrayList<>();
         for(Task task : mTasks){
             for(Project project : mProjects){
-                if(project.getId()==task.getId()){
+                if(project.getId()==task.getProjectId()){
                     taskWithProjects.add(new TaskWithProject(task, project));
                     break;
                 }
@@ -84,6 +108,11 @@ public class MainViewModel extends ViewModel {
 
 
     }
+
+    /**
+     * Returning the livedata with the project associate to the task
+     * @return
+     */
 
     public LiveData<List<TaskWithProject>> getTaskWithProject(){
 
@@ -95,7 +124,7 @@ public class MainViewModel extends ViewModel {
 
 
     /**
-     * Tasks
+     * Return the proper livedata depending on the sort method
      *
      * @return
      */
@@ -122,18 +151,23 @@ public class MainViewModel extends ViewModel {
         }
     }
 
-    @Nullable
-    public LiveData<List<Task>> getAllTasks() {
-        return mTaskRepository.getAllTasks();
-    }
 
-
+    /**
+     * Method that create a Task
+     * @param projectId
+     * @param nameP
+     * @param creationTimestamp
+     */
     public void createTask(Long projectId, String nameP, long creationTimestamp) {
         mExecutor.execute(() -> {
             mTaskRepository.createTask(new Task(projectId, nameP, creationTimestamp));
         });
     }
 
+    /**
+     * Delete a task from base
+     * @param task
+     */
 
     public void deleteTask(Task task) {
         mExecutor.execute(() -> mTaskRepository.deleteTask(task));
@@ -141,17 +175,9 @@ public class MainViewModel extends ViewModel {
 
 
     /**
-     * Project
-     *
-     * @param projectId
+     * Change the sort method variable and return the livedata from repository
      * @return
      */
-
-    public LiveData<Project> getProjectById(Long projectId) {
-        return mProjectRepository.getProjectById(projectId);
-    }
-
-
     public LiveData<List<Task>> getTasksAToZ() {
         tri = SortMethod.ALPHABETICAL;
         return mTaskRepository.getTasksAToZ();
@@ -174,10 +200,11 @@ public class MainViewModel extends ViewModel {
         return mTaskRepository.getTasksOldToRecent();
     }
 
-    public LiveData<List<Project>> getAllProject() {
-        return mProjectRepository.getAllProject();
-    }
 
+    /**
+     * Return a livedata with the array of project for the spinner of the activity
+     * @return
+     */
     public LiveData<Project[]> getAllProjects() {
         return mProjectRepository.getAllProjects();
     }

@@ -33,17 +33,16 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
     @NonNull
     private List<Task> tasks;
 
-    /**
-     * The list of project to identify the project associate with the task with id
-     */
-    @NonNull
-    private List<Project> mProjects;
 
     /**
      * The listener for when a task needs to be deleted
      */
     @NonNull
     private final DeleteTaskListener deleteTaskListener;
+
+    /**
+     * The project associate to a Task to deal with the view
+     */
 
     private List<TaskWithProject> mTaskWithProjects;
 
@@ -53,7 +52,6 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
      */
     TasksAdapter(@NonNull final DeleteTaskListener deleteTaskListener) {
         this.tasks = new ArrayList<>();
-        this.mProjects = new ArrayList<>();
         this.mTaskWithProjects = new ArrayList<>();
         this.deleteTaskListener = deleteTaskListener;
     }
@@ -70,17 +68,17 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
         notifyDataSetChanged();
     }
 
+    /**
+     *  Updates the list of TasksWithProject the adapter deals with
+     * @param taskWithProjects
+     */
+
     void updateTaskWithProject(List<TaskWithProject> taskWithProjects){
         this.mTaskWithProjects.clear();
         this.mTaskWithProjects = taskWithProjects;
 
     }
 
-    void updateProjects(@NonNull final List<Project> projects){
-
-        this.mProjects.clear();
-        this.mProjects = projects;
-    }
 
     @NonNull
     @Override
@@ -91,7 +89,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder taskViewHolder, int position) {
-        taskViewHolder.bind(tasks.get(position), mProjects);
+        taskViewHolder.bind(tasks.get(position),mTaskWithProjects.get(position));
     }
 
     @Override
@@ -172,26 +170,19 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
         /**
          * Binds a task to the item view.
          *
-         * @param task the task to bind in the item view
+         * @param taskWithProject the taskWithProject to bind in the item view
          */
-        void bind(Task task, List<Project> project) {
+        void bind(Task task, TaskWithProject taskWithProject) {
+
+            Project projectW = taskWithProject.getProject();
+
             lblTaskName.setText(task.getName());
             imgDelete.setTag(task);
 
-            Project taskProject = null;
 
-            for(Project projects : project) {
-
-                if(Objects.equals(task.getProjectId(), projects.getId())){
-                    taskProject = projects;
-                    break;
-
-                }
-            }
-
-            if (taskProject != null) {
-                imgProject.setSupportImageTintList(ColorStateList.valueOf(taskProject.getColor()));
-                lblProjectName.setText(taskProject.getName());
+            if (projectW != null) {
+                imgProject.setSupportImageTintList(ColorStateList.valueOf(projectW.getColor()));
+                lblProjectName.setText(projectW.getName());
             } else {
                 imgProject.setVisibility(View.INVISIBLE);
                 lblProjectName.setText("");

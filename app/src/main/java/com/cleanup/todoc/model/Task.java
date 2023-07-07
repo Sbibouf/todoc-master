@@ -45,20 +45,12 @@ public class Task {
     private long creationTimestamp;
 
     /**
-     * Instantiates a new Task.
+     * Instantiates a new Task
      *
-     * @param id                the unique identifier of the task to set
-     * @param name              the name of the task to set
-     * @param creationTimestamp the timestamp when the task has been created to set
+     * @param projectId
+     * @param nameP
+     * @param creationTimestamp
      */
-    public Task(Long id,Long projectId, @NonNull String name, long creationTimestamp) {
-        this.setId(id);
-        this.setProjectId(projectId);
-        this.setName(name);
-        this.setCreationTimestamp(creationTimestamp);
-    }
-
-
 
     public Task (Long projectId, @NonNull String nameP, long creationTimestamp ) {
 
@@ -144,6 +136,20 @@ public class Task {
     //**************************
     // For Tests
     //**************************
+
+    /**
+     * Instantiates a new Task.
+     *
+     * @param id                the unique identifier of the task to set
+     * @param name              the name of the task to set
+     * @param creationTimestamp the timestamp when the task has been created to set
+     */
+    public Task(Long id,Long projectId, @NonNull String name, long creationTimestamp) {
+        this.setId(id);
+        this.setProjectId(projectId);
+        this.setName(name);
+        this.setCreationTimestamp(creationTimestamp);
+    }
 
     public static class TaskAZComparator implements Comparator<Task> {
         @Override

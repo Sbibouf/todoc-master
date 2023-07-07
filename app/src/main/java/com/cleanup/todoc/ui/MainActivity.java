@@ -86,12 +86,8 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
         configureViewModel();
         configureRecyclerView();
-        getProjectToAdapter();
         verifPresenceTache();
         getTaskWithProject();
-        //getTasks();
-
-
 
         binding.fabAddTask.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,9 +181,6 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         getProjectInSpinner();
     }
 
-
-
-
     /**
      * Returns the dialog allowing the user to create a new task.
      *
@@ -240,15 +233,6 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     }
 
     /**
-     * Get all Projects in a list from database and give it to the adapter
-     */
-
-    private void getProjectToAdapter(){
-
-        mMainViewModel.getAllProject().observe(this, this::updateProject);
-    }
-
-    /**
      * Sets the data of the Spinner with projects to associate to a new task
      */
     private void populateDialogSpinner(Project[] projects) {
@@ -260,14 +244,19 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         }
     }
 
-
-
+    /**
+     * Configure and provide a new ViewModel
+     */
     public void configureViewModel() {
 
         this.mMainViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance(this)).get(MainViewModel.class);
 
 
     }
+
+    /**
+     * Configure the recycler view with a new TaskAdapter
+     */
 
     public void configureRecyclerView() {
 
@@ -277,6 +266,9 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
     }
 
+    /**
+     * All Sort method that observe the proper livedata
+     */
 
     private void getTasksAToZ(){
         this.mMainViewModel.getTasksAToZ().observe(this, this::updateTasks);
@@ -298,21 +290,27 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         this.mMainViewModel.getTaskWithProject().observe(this, this::updateTaskWithProject);
     }
 
-
+    /**
+     * Get the task with the associated project and throw it to the adapter to deal with
+     * @param taskWithProjects
+     */
 
     private void updateTaskWithProject(List<TaskWithProject> taskWithProjects){
         this.adapter.updateTaskWithProject(taskWithProjects);
     }
 
+    /**
+     * Throw all task to the adapter to deal with
+     * @param tasks
+     */
     private void updateTasks(List<Task> tasks) {
         this.adapter.updateTasks(tasks);
 
     }
 
-    private void updateProject(List<Project> projects){
-        this.adapter.updateProjects(projects);
-    }
-
+    /**
+     * Verification of existing task in database for updating UI
+     */
     private void verifPresenceTache() {
 
         mMainViewModel.getCurrentTasks().observe(this, new Observer<List<Task>>() {
@@ -330,5 +328,4 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         });
 
     }
-
 }

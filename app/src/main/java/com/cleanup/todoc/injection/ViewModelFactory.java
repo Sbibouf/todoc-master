@@ -26,6 +26,12 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
 
     private static volatile ViewModelFactory sFactory;
 
+    /**
+     * Getan instance of a new ViewModelFactory
+     * @param context
+     * @return
+     */
+
     public static ViewModelFactory getInstance(Context context) {
         if(sFactory == null) {
             synchronized (ViewModelFactory.class){

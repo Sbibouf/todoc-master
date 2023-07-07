@@ -2,19 +2,20 @@ package com.cleanup.todoc.model;
 
 public class TaskWithProject {
 
-    //************************
-    // VARIABLES
-    //************************
+    /**
+     * Task and Project variable to associate with class
+     */
 
     private Task task;
 
     private Project project;
 
 
-
-    //*********************************
-    // CONSTRUCTOR
-    //*********************************
+    /**
+     * Instantiates a new TaskWithProject
+     * @param task
+     * @param project
+     */
 
 
     public TaskWithProject(Task task, Project project){
@@ -24,10 +25,10 @@ public class TaskWithProject {
     }
 
 
-
-    //*********************************
-    // GETTERS AND SETTERS
-    //*********************************
+    /**
+     * Getters and setters for the variables
+     * @return
+     */
 
 
     public Task getTask() {

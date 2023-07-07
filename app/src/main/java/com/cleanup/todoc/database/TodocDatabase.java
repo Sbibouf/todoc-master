@@ -22,17 +22,26 @@ import java.util.concurrent.Executors;
 public abstract class TodocDatabase extends RoomDatabase {
 
 
-    // --- SINGLETON ---
+    /**
+     * Instance variable for Singleton
+     */
 
     private static volatile TodocDatabase INSTANCE;
 
-    // --- DAO ---
+    /**
+     * Dao
+     * @return
+     */
 
     public abstract ProjectDao projectDao();
 
     public abstract TaskDao taskDao();
 
-    // --- INSTANCE ---
+    /**
+     * Get an instance of a new TodocDatabase
+     * @param context
+     * @return
+     */
 
     public static TodocDatabase getInstance(Context context) {
 
@@ -59,6 +68,11 @@ public abstract class TodocDatabase extends RoomDatabase {
         return INSTANCE;
 
     }
+
+    /**
+     * Prepopulate the database with all known projects
+     * @return
+     */
 
     private static Callback prepopulateDatabase() {
 
